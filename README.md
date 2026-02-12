@@ -71,7 +71,7 @@ these caveats:
 * Make sure to select a model and set it up.
 I recommend using Anthropic with an API Key.
 
-* For the Gateway bind option, select localhost instead of lan.
+* For the Gateway bind option, select **localhost** instead of **lan**.
 
 * When asked to configure chat channels, please select at least one.
 Telegram is recommended as you just need to open your app and chat with
@@ -117,3 +117,26 @@ if you wish:
 # Stop OpenClaw Gateway
 clawdock-stop
 ```
+
+## Using the Web Dashboard
+
+In order to access the dashboard you need to setup the token and perform a pairing process:
+
+* First obtain the token by using the `clawdock-token` command.
+
+* Now open the dashboard using this URL:
+[localhost:18789/overview](http://localhost:18789/overview)
+
+* Paste the token in the appropiate text-box and click **connect**.
+
+* Finally pair the browser using these commands:
+
+```shell
+# Run this command and copy the Request ID
+./docker-devices.zsh
+
+# Approve the device using the Request ID
+clawdock-approve [request_id]
+```
+
+Reload the dashboard and you should be able to use it to chat and perform admin tasks.
