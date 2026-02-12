@@ -3,10 +3,6 @@
 This guide is intended for macOS users who want to try OpenClaw
 in a safe envionment via Docker.
 
-Since the original `docker-setup.sh` doesn't work with the
-bash version shipped in macOS, a new set of scripts has been
-made for macOS. This document will explain how to use them.
-
 ## Cloning this repository
 
 The first step for using OpenClaw is to download the repository from github.
@@ -20,6 +16,26 @@ git clone https://github.com/moisoto/openclaw-macOS.git
 
 cd openclaw-macOS
 ```
+
+## Installing helper scripts
+
+Most scripts used in this guide are provided by the openclaw repo.
+To use them first download them to ~/.clawdock folder:
+
+```shell
+# Create folder ~/.clawdock and download helper script
+mkdir -p ~/.clawdock && curl -sL https://raw.githubusercontent.com/openclaw/openclaw/main/scripts/shell-helpers/clawdock-helpers.sh -o ~/.clawdock/clawdock-helpers.sh
+```
+
+Also make sure to add them to your ~/.zshrc script:
+
+```shell
+# Add helpers to ~/.zshrc
+echo 'source ~/.clawdock/clawdock-helpers.sh' >> ~/.zshrc && source ~/.zshrc
+```
+
+For the original documentation please visit:
+[github.com/openclaw/openclaw/blob/main/scripts/shell-helpers/README.md](https://github.com/openclaw/openclaw/blob/main/scripts/shell-helpers/README.md)
 
 ## Setting up the docker image
 
@@ -49,12 +65,15 @@ When prompted:
 It will then warn you about security risks. Since this will run in
 a container there's nothing to worry, pick _**Yes**_.
 
-Now choose **Manual Onboarding mode** and follow the instructions.
+Now choose **Manual Onboarding mode** and follow the instructions with
+these caveats:
 
-Make sure to select a model and set it up.
+* Make sure to select a model and set it up.
 I recommend using Anthropic with an API Key.
 
-When asked to configure chat channels, please select at least one.
+* For the Gateway bind option, select localhost instead of lan.
+
+* When asked to configure chat channels, please select at least one.
 Telegram is recommended as you just need to open your app and chat with
 _@BotFather_. Type `/newbot` inside the chat and follow the instructions.
 
@@ -71,10 +90,10 @@ Run the following script:
 
 ```shell
 # Start OpenClaw Gateway
-./docker-start
+clawdock-start
 
 # Check gateway is running
-docker ps --filter ancestor=openclaw:local
+clawdock-status
 ```
 
 ## Chatting with OpenClaw
@@ -96,5 +115,5 @@ if you wish:
 
 ```shell
 # Stop OpenClaw Gateway
-./docker-stop.zsh
+clawdock-stop
 ```
