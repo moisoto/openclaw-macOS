@@ -1,4 +1,6 @@
 #!/usr/bin/env zsh
+
+option=$1
 set -euo pipefail
 
 repo_path="openclaw"
@@ -35,6 +37,16 @@ if command -v glow >/dev/null 2>&1; then
   show_tags | glow -w0
 else
   show_tags
+fi
+
+# Exit if --list was passed
+if [[ "$option" == "--list" ]]; then
+  exit 0
+fi
+
+if ! command -v glow >/dev/null 2>&1; then
+  echo "gum utility is required to proceed with reset"
+  exit 1
 fi
 
 HASH=$(\
