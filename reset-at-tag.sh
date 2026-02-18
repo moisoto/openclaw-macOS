@@ -21,14 +21,16 @@ GUM_VAL="%(if)%(taggerdate)%(then)%(*objectname:short=10)%(else)%(objectname:sho
 GUM_LBL="$GUM_VAL → %(contents:subject)"
 
 cd $repo_path
-clear
+echo "Fetching..."
+git fetch origin main >/dev/null 2>&1
+git fetch origin --tags >/dev/null 2>&1
 
 show_tags() {
 echo "| Tag/Ref            | Type     | Date       | Hash                    | Subject                                                                |"
 echo "|--------------------|----------|------------|-------------------------|------------------------------------------------------------------------|"
 git for-each-ref refs/tags \
   --sort=-creatordate \
-  --format="| $REF_FMT | $OTY_FMT | $CDT_FMT | $HSH_FMT | $SUB_FMT |" | \
+  --format="| $REF_FMT | $OTY_FMT | $CDT_FMT | $HSH_FMT | $SUB_FMT |" |
   head -10
 }
 
@@ -57,7 +59,7 @@ HASH=$(\
     git merge-base --is-ancestor "$val" HEAD && \
       printf '%s|%s\n' "$lbl" "$val"
   done |
-  head -10 | \
+  head -10 |
   gum choose \
     --header="Choose a local commit to reset to:" \
     --label-delimiter="|" \
