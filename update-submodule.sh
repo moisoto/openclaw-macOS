@@ -51,6 +51,9 @@ git fetch origin --tags >/dev/null 2>&1
 # Get "latest" tag
 last_tag=$(git describe --tags --abbrev=0 origin/main)
 
+# Get current local tag
+curr_tag=$(git tag --points-at HEAD)
+
 # Get commit hashes
 echo "Getting Hashes..."
 local_head=$(git rev-parse main)
@@ -58,6 +61,10 @@ remote_head=$(git rev-parse origin/main)
 merge_base=$(git merge-base main origin/main)
 latest_tag_commit=$(git rev-parse "$last_tag^{}")
 latest_base=$(git merge-base "$local_head" "$latest_tag_commit")
+
+[[ "$curr_tag" == "$last_tag" ]] && MSG_COLOR=$TC_GREEN || MSG_COLOR=$MC_YELLOW
+[[ ! -z "$curr_tag" ]] && echo "${MSG_COLOR}Current Local Tag: ${curr_tag}${MC_NORMAL}"
+[[ ! -z "$last_tag" ]] && echo "${TC_GREEN}Latest Remote Tag: ${last_tag}${MC_NORMAL}"
 
 if [[ "$local_head" == "$latest_tag_commit" && "$LATEST_TAG" == "yes" ]]; then
   echo
@@ -71,7 +78,14 @@ elif [[ "$latest_tag_commit" == "$latest_base" && "$LATEST_TAG" == "yes" ]]; the
   echo "${MC_YELLOW}Submodule is past the latest tag (${MC_BLUE}$last_tag${MC_YELLOW})!${MC_NORMAL}"
   read "REPLY?Do you want discard extra commits? [y/N] "
   if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+    # Reset HEAD, the index, and all tracked files
+    # to exactly match the specified commit
     git reset --hard "$latest_tag_commit"
+
+    # Remove all untracked files and directories
+    # (files that did not exist at that commit)
+    git clean -fd
+
     echo "${TC_GREEN}Submodule now at latest tag.${MC_NORMAL}"
     cd - >/dev/null
     chk-submodule-pending
@@ -122,7 +136,14 @@ if [[ $PROCEED == "yes" ]]; then
     echo
     if [[ "$latest_tag_commit" == "$latest_base" && "$LATEST_TAG" == "yes" ]]; then
       echo "${MC_YELLOW}Our pull went past the latest tag (${MC_BLUE}$last_tag${MC_YELLOW})! Extra commits will be discarded.${MC_NORMAL}"
+      # Reset HEAD, the index, and all tracked files
+      # to exactly match the specified commit
       git reset --hard "$latest_tag_commit"
+
+      # Remove all untracked files and directories
+      # (files that did not exist at that commit)
+      git clean -fd
+
       echo "Submodule now at latest tag"
       echo
     fi
