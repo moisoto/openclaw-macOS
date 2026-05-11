@@ -46,10 +46,21 @@ git fetch origin main >/dev/null 2>&1
 
 # Fetch tags
 echo "Fetching Tags..."
-git fetch origin --tags >/dev/null 2>&1
+git fetch origin --tags --force >/dev/null 2>&1
 
-# Get "latest" tag
-last_tag=$(git describe --tags --abbrev=0 origin/main)
+# Get latest stable tag in repository
+# Excludes prerelease tags like beta/rc/alpha
+last_tag=$(
+  git tag --sort=-v:refname \
+    | grep -Ev 'beta|rc|alpha' \
+    | head -n1
+)
+
+# Fallback:
+# If no stable tag exists, use nearest reachable tag from origin/main
+if [[ -z "$last_tag" ]]; then
+  last_tag=$(git describe --tags --abbrev=0 origin/main)
+fi
 
 # Get current local tag
 curr_tag=$(git tag --points-at HEAD)
