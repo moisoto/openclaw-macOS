@@ -14,7 +14,13 @@ as a submodule.
 # Clone repository
 git clone --recurse-submodules https://github.com/moisoto/openclaw-macOS.git
 
-cd openclaw-macOS
+# Checkout main branch
+cd openclaw-macOS/openclaw
+git checkout main
+
+# Discard changes after tag Latest
+cd ..
+./reset-at-latest.sh
 ```
 
 ## Installing helper scripts
