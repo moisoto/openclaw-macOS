@@ -12,7 +12,7 @@ as a submodule.
 
 ```shell
 # Clone repository
-git clone https://github.com/moisoto/openclaw-macOS.git
+git clone --recurse-submodules https://github.com/moisoto/openclaw-macOS.git
 
 cd openclaw-macOS
 ```
